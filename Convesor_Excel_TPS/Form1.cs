@@ -115,7 +115,8 @@ namespace Convesor_Excel_TPS
             lblPendencia.Text = "0";
             lblCarregada.Text = "0";
             buttonAbrir.Enabled = true;
-         
+
+
             BindingSource bindingSource1 = new BindingSource();
             SqlDataAdapter dataAdapter = new SqlDataAdapter();
             Button reloadButton = new Button();
@@ -143,6 +144,8 @@ namespace Convesor_Excel_TPS
             dataGridSQL.DataSource = bindingSource1;
             conn.Close();
 
+            tabela = comboBoxTabela.SelectedItem.ToString();
+ 
         }
 
     private void chbNova_CheckedChanged(object sender, EventArgs e)
@@ -256,8 +259,8 @@ namespace Convesor_Excel_TPS
         private void cmbPlanilha_SelectedIndexChanged(object sender, EventArgs e)
         {
             btnCarregar.Enabled = true;
-            string filePath = caminho;
-            FileInfo existingFile = new FileInfo(filePath);
+         //   string filePath = caminho;
+            FileInfo existingFile = new FileInfo(caminho);
             ExcelPackage package = new ExcelPackage(existingFile);
             ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex];
             lblTotal.Text = (workSheet.Dimension.End.Row - 1).ToString();
@@ -348,11 +351,8 @@ namespace Convesor_Excel_TPS
 
         private void dataGridSQL_DragDrop(object sender, DragEventArgs e)
         {
-            // The mouse locations are relative to the screen, so they must be 
-            // converted to client coordinates.
             Point clientPoint = dataGridSQL.PointToClient(new Point(e.X, e.Y));
 
-            // If the drag operation was a copy then add the row to the other control.
             if (e.Effect == DragDropEffects.Copy)
             {
                 string cellvalue = e.Data.GetData(typeof(string)) as string;
@@ -380,18 +380,12 @@ namespace Convesor_Excel_TPS
                 valueFromMouseDown = dataGridExcel.Rows[hittestInfo.RowIndex].Cells[hittestInfo.ColumnIndex].Value;
                 if (valueFromMouseDown != null)
                 {
-                    // Remember the point where the mouse down occurred. 
-                    // The DragSize indicates the size that the mouse can move 
-                    // before a drag event should be started.                
                     Size dragSize = SystemInformation.DragSize;
 
-                    // Create a rectangle using the DragSize, with the mouse position being
-                    // at the center of the rectangle.
                     dragBoxFromMouseDown = new Rectangle(new Point(e.X - (dragSize.Width / 2), e.Y - (dragSize.Height / 2)), dragSize);
                 }
             }
             else
-                // Reset the rectangle if the mouse is not over an item in the ListBox.
                 dragBoxFromMouseDown = Rectangle.Empty;
         }
 
@@ -399,10 +393,8 @@ namespace Convesor_Excel_TPS
         {
             if ((e.Button & MouseButtons.Left) == MouseButtons.Left)
             {
-                // If the mouse moves outside the rectangle, start the drag.
                 if (dragBoxFromMouseDown != Rectangle.Empty && !dragBoxFromMouseDown.Contains(e.X, e.Y))
                 {
-                    // Proceed with the drag and drop, passing in the list item.                    
                     DragDropEffects dropEffect = dataGridExcel.DoDragDrop(valueFromMouseDown, DragDropEffects.Copy);
                 }
             }
@@ -415,39 +407,79 @@ namespace Convesor_Excel_TPS
 
         private void button2_Click(object sender, EventArgs e)
         {
-            //List<string> list = dataGridSQL.Rows
-            //                 .OfType<DataGridViewRow>()
-            //                 .Select(r => r.Cells["Excel"].Value.ToString())
-            //                 .ToList();
-
-            List<string> list = new List<string>();
-            List<string> listb = new List<string>();
+            
+            List<string> listExcel2 = new List<string>();
+            List<string> index = new List<string>();
+            List<string> listSQL = new List<string>();
 
             foreach (DataGridViewRow item in dataGridSQL.Rows)
             {
-                if (item.Cells.Count >= 2 && //atleast two columns
+
+                for (int i = 0; i < item.Cells.Count; i++)
+                {
+                  
+                }
+                 
+                if ( 
                     item.Cells[1].Value != null) //value is not null
                 {
-                    if(item.Cells[1].Value.ToString() != "")
+                    if (item.Cells[1].Value.ToString() != "")
                     {
-                        list.Add(item.Cells[1].Value.ToString());
-                        listb.Add(item.Cells[0].Value.ToString());
+                        MessageBox.Show(item.Cells[1].Value.ToString());
+
+                        foreach (DataGridViewRow row in dataGridExcel.Rows)
+                        {
+                            if (row.Cells[0].Value.ToString().Equals(item.Cells[1].Value.ToString()))
+                            {
+                                MessageBox.Show(row.Index.ToString()) ;
+                                break;
+                            }
+                        }
+
+                        listSQL.Add(item.Cells[0].Value.ToString());
                     }
-              
                 }
             }
 
+            StringBuilder comando = new StringBuilder();
+             
 
-            for (int i = 0; i < list.Count; i++)
+            ExcelPackage package = new ExcelPackage(caminho);
+            ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex];
+
+            for (int n = 2; n < workSheet.Dimension.Rows; n++)
             {
-                MessageBox.Show(list[i].ToString());
+                comando.Append(" Insert into " + tabela + "(  ");
+
+                for (int j = 0; j < listSQL.Count; j++)
+                {
+                   
+                    if (j == listSQL.Count - 1)
+                    {
+                        comando.Append(" " + listSQL[j].ToString() + " ) ");
+                    }
+                    else
+                    {
+                        comando.Append(" " + listSQL[j].ToString() + ", ");
+                    }
+                }
+                comando.Append(" values ( ");
+
+                for (int i = 1; i < workSheet.Dimension.Columns; i++)
+                {
+                    if (i == workSheet.Dimension.Columns - 1)
+                    {
+                        comando.Append(" " + workSheet.Cells[n, i].Value.ToString() + " ) ");
+                    }
+                    else
+                    {
+                        comando.Append(" " + workSheet.Cells[n, i].Value.ToString() + ", ");
+                    }
+                }
+          
             }
 
-            for (int i = 0; i < listb.Count; i++)
-            {
-                MessageBox.Show(listb[i].ToString());
-            }
-
+            MessageBox.Show(comando.ToString());
         }
     }
 }
