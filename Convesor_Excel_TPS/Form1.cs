@@ -259,7 +259,6 @@ namespace Convesor_Excel_TPS
         private void cmbPlanilha_SelectedIndexChanged(object sender, EventArgs e)
         {
             btnCarregar.Enabled = true;
-         //   string filePath = caminho;
             FileInfo existingFile = new FileInfo(caminho);
             ExcelPackage package = new ExcelPackage(existingFile);
             ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex];
@@ -279,6 +278,8 @@ namespace Convesor_Excel_TPS
                     campos.Add(cell.Text);
                 }
             }
+
+
             dataGridExcel.DataSource = campos.Select(x => new { Value = x }).ToList();
             dataGridExcel.Show();
         }
@@ -346,6 +347,10 @@ namespace Convesor_Excel_TPS
         {
  
         }
+
+
+
+
         private Rectangle dragBoxFromMouseDown;
         private object valueFromMouseDown;
 
@@ -411,75 +416,159 @@ namespace Convesor_Excel_TPS
             List<string> listExcel2 = new List<string>();
             List<string> index = new List<string>();
             List<string> listSQL = new List<string>();
+            string[,] rowss = new string[,] { };
 
-            foreach (DataGridViewRow item in dataGridSQL.Rows)
+
+
+
+            foreach (DataGridViewRow rowGridSQL in dataGridSQL.Rows)
             {
-
-                for (int i = 0; i < item.Cells.Count; i++)
+                if (
+                    rowGridSQL.Cells[1].Value != null) //value coluna 2 is not null
                 {
-                  
-                }
-                 
-                if ( 
-                    item.Cells[1].Value != null) //value is not null
-                {
-                    if (item.Cells[1].Value.ToString() != "")
+                    if (rowGridSQL.Cells[1].Value.ToString() != "")
                     {
-                        MessageBox.Show(item.Cells[1].Value.ToString());
 
-                        foreach (DataGridViewRow row in dataGridExcel.Rows)
+                        foreach (DataGridViewRow rowGridExcel in dataGridExcel.Rows)
                         {
-                            if (row.Cells[0].Value.ToString().Equals(item.Cells[1].Value.ToString()))
+                            if (rowGridExcel.Cells[0].Value.ToString().Equals(rowGridSQL.Cells[1].Value.ToString()))
                             {
-                                MessageBox.Show(row.Index.ToString()) ;
+
+                                index.Add(rowGridExcel.Cells[0].RowIndex.ToString()) ;
+                                listExcel2.Add(rowGridExcel.Cells[0].Value.ToString());
+                                listSQL.Add(rowGridSQL.Cells[0].Value.ToString());
+                                
+
+
                                 break;
+
+
                             }
                         }
 
-                        listSQL.Add(item.Cells[0].Value.ToString());
-                    }
-                }
-            }
-
-            StringBuilder comando = new StringBuilder();
-             
-
-            ExcelPackage package = new ExcelPackage(caminho);
-            ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex];
-
-            for (int n = 2; n < workSheet.Dimension.Rows; n++)
-            {
-                comando.Append(" Insert into " + tabela + "(  ");
-
-                for (int j = 0; j < listSQL.Count; j++)
-                {
-                   
-                    if (j == listSQL.Count - 1)
-                    {
-                        comando.Append(" " + listSQL[j].ToString() + " ) ");
-                    }
-                    else
-                    {
-                        comando.Append(" " + listSQL[j].ToString() + ", ");
-                    }
-                }
-                comando.Append(" values ( ");
-
-                for (int i = 1; i < workSheet.Dimension.Columns; i++)
-                {
-                    if (i == workSheet.Dimension.Columns - 1)
-                    {
-                        comando.Append(" " + workSheet.Cells[n, i].Value.ToString() + " ) ");
-                    }
-                    else
-                    {
-                        comando.Append(" " + workSheet.Cells[n, i].Value.ToString() + ", ");
-                    }
-                }
           
+                    }
+                }
+            }
+            dataGridSQL.DataSource = null;
+            dataGridSQL.Columns.Add("listExcel2", "listExcel2");
+            dataGridSQL.Columns.Add("listSQL", "listSQL");
+
+            for (int i = 0; i < listExcel2.Count; i++)
+            {
+
+                dataGridSQL.Rows.Add();
+                dataGridSQL.Rows[i].Cells["listExcel2"].Value = listExcel2[i];
+                dataGridSQL.Rows[i].Cells["listSQL"].Value = listSQL[i];
             }
 
-            MessageBox.Show(comando.ToString());
+
+
+            //for (int i = 0; i < rows.GetLength(0); i++)// array rows
+            //{
+            //    string[] row = new string[rows.GetLength(1)];
+
+            //    for (int j = 0; j < rows.GetLength(1); j++)
+            //    {
+            //        row[j] = rows[i, j];
+            //    }
+
+            //    dataGridView1.Rows.Add(row);
+            //}
+
+
+
+            //   dataGridSQL.DataSource = rowss;
+
+            //MessageBox.Show(index.ToArray().ToString());
+            //MessageBox.Show(listExcel2.ToArray().ToString());
+            //MessageBox.Show(listSQL.ToArray().ToString());
+
+            //for (int i = 0; i < index.Count; i++)
+            //{
+            //    MessageBox.Show(index[i].ToString());
+            //}
+
+            //for (int i = 0; i < listExcel2.Count; i++)
+            //{
+            //    MessageBox.Show(listExcel2[i].ToString());
+            //}
+
+            //for (int i = 0; i < listSQL.Count; i++)
+            //{
+            //    MessageBox.Show(listSQL[i].ToString());
+            //}
+
+
+
+            //int[] theData = new int[] { 5, 2, 1, 5, 4, 1, 3, 1 };
+
+
+
+            //foreach (DataGridViewRow rowGridExcel in dataGridExcel.Rows)
+            //{
+            //    if (rowGridExcel.Cells[0].Value.ToString().Equals(rowGridSQL.Cells[1].Value.ToString()))
+            //    {
+            //        for (int i = 0; i < listExcel2.Count; i++)
+            //        {
+            //            rowGridExcel.Cells[1].Value.Add(new object[] { listExcel2[i] });
+            //        }
+
+
+            //    }
+            //}
+
+            //StringBuilder comando = new StringBuilder();
+            //ExcelPackage package = new ExcelPackage(caminho);
+            //ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex];
+
+            //for (int n = 2; n < workSheet.Dimension.Rows; n++)
+            //{
+            //    comando.Clear();
+            //    comando.Append(" Insert into " + tabela + "(  ");
+            //    for (int j = 0; j < index.Count; j++)
+            //    {
+            //        int num = Int32.Parse(index[j]);
+            //        if (j == listSQL.Count - 1)
+            //        {
+            //            comando.Append(" " + listSQL[num].ToString() + " ) ");
+            //        }
+            //        else
+            //        {
+            //            comando.Append(" " + listSQL[num].ToString() + ", ");
+            //        }
+            //    }
+            //    comando.Append(" values ( ");
+            //    for (int i = 0; i < index.Count; i++)
+            //    {
+            //        int num = Int32.Parse(index[i]);
+            //        if (i == index.Count - 1)
+            //        {
+            //            comando.Append(" '" + workSheet.Cells[n, i + 1].Value.ToString() + "' ) ");
+            //        }
+            //        else
+            //        {
+            //            comando.Append(" '" + workSheet.Cells[n, i + 1].Value.ToString() + "', ");
+            //        }
+            //    }
+
+            //    SqlCommand cmd = conn.CreateCommand();
+
+
+            //    cmd.CommandText = comando.ToString();
+            //    if (conn.State.ToString() == "Closed")
+            //        conn.Open();
+
+            //    SqlTransaction trA = null;
+            //    trA = conn.BeginTransaction();
+            //    cmd.Transaction = trA;
+            //    cmd.ExecuteNonQuery();
+            //    trA.Commit();
+            //    conn.Close();
+
+            //}
+
+
         }
     }
 }
