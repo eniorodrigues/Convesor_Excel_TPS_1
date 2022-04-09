@@ -458,8 +458,9 @@ namespace Convesor_Excel_TPS
             {
 
                 dataGridSQL.Rows.Add();
-                dataGridSQL.Rows[i].Cells["listExcel2"].Value = listExcel2[i];
                 dataGridSQL.Rows[i].Cells["listSQL"].Value = listSQL[i];
+                dataGridSQL.Rows[i].Cells["listExcel2"].Value = listExcel2[i];
+           
             }
 
 
