@@ -72,6 +72,7 @@
             this.label8 = new System.Windows.Forms.Label();
             this.tab = new System.Windows.Forms.TabControl();
             this.button2 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.tabNova.SuspendLayout();
             this.tabTP.SuspendLayout();
@@ -314,7 +315,7 @@
             this.tabNova.Margin = new System.Windows.Forms.Padding(1, 1, 1, 1);
             this.tabNova.Name = "tabNova";
             this.tabNova.Padding = new System.Windows.Forms.Padding(1, 1, 1, 1);
-            this.tabNova.Size = new System.Drawing.Size(909, 259);
+            this.tabNova.Size = new System.Drawing.Size(1151, 367);
             this.tabNova.TabIndex = 1;
             this.tabNova.Text = "Nova Tabela";
             this.tabNova.UseVisualStyleBackColor = true;
@@ -385,7 +386,7 @@
             this.tabTP.Margin = new System.Windows.Forms.Padding(1, 1, 1, 1);
             this.tabTP.Name = "tabTP";
             this.tabTP.Padding = new System.Windows.Forms.Padding(1, 1, 1, 1);
-            this.tabTP.Size = new System.Drawing.Size(875, 259);
+            this.tabTP.Size = new System.Drawing.Size(869, 367);
             this.tabTP.TabIndex = 0;
             this.tabTP.Text = "Carregar TP";
             this.tabTP.UseVisualStyleBackColor = true;
@@ -399,7 +400,7 @@
             this.dataGridSQL.AllowUserToResizeRows = false;
             this.dataGridSQL.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridSQL.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
-            this.dataGridSQL.Location = new System.Drawing.Point(660, 12);
+            this.dataGridSQL.Location = new System.Drawing.Point(615, 12);
             this.dataGridSQL.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.dataGridSQL.MultiSelect = false;
             this.dataGridSQL.Name = "dataGridSQL";
@@ -408,7 +409,7 @@
             this.dataGridSQL.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.dataGridSQL.RowTemplate.Height = 24;
             this.dataGridSQL.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.dataGridSQL.Size = new System.Drawing.Size(200, 237);
+            this.dataGridSQL.Size = new System.Drawing.Size(240, 326);
             this.dataGridSQL.TabIndex = 45;
             this.dataGridSQL.DragDrop += new System.Windows.Forms.DragEventHandler(this.dataGridSQL_DragDrop);
             this.dataGridSQL.DragEnter += new System.Windows.Forms.DragEventHandler(this.dataGridSQL_DragEnter);
@@ -423,7 +424,7 @@
             this.dataGridExcel.AllowUserToResizeRows = false;
             this.dataGridExcel.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridExcel.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
-            this.dataGridExcel.Location = new System.Drawing.Point(428, 12);
+            this.dataGridExcel.Location = new System.Drawing.Point(386, 12);
             this.dataGridExcel.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.dataGridExcel.MultiSelect = false;
             this.dataGridExcel.Name = "dataGridExcel";
@@ -432,7 +433,7 @@
             this.dataGridExcel.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.dataGridExcel.RowTemplate.Height = 24;
             this.dataGridExcel.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.dataGridExcel.Size = new System.Drawing.Size(200, 237);
+            this.dataGridExcel.Size = new System.Drawing.Size(214, 326);
             this.dataGridExcel.TabIndex = 45;
             this.dataGridExcel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.dataGridExcel_MouseDown);
             this.dataGridExcel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.dataGridExcel_MouseMove);
@@ -562,28 +563,40 @@
             // 
             this.tab.Controls.Add(this.tabTP);
             this.tab.Controls.Add(this.tabNova);
-            this.tab.Location = new System.Drawing.Point(19, 219);
+            this.tab.Location = new System.Drawing.Point(19, 229);
             this.tab.Margin = new System.Windows.Forms.Padding(1, 1, 1, 1);
             this.tab.Name = "tab";
             this.tab.SelectedIndex = 0;
-            this.tab.Size = new System.Drawing.Size(883, 285);
+            this.tab.Size = new System.Drawing.Size(877, 393);
             this.tab.TabIndex = 74;
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(816, 179);
+            this.button2.Location = new System.Drawing.Point(682, 202);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.Size = new System.Drawing.Size(187, 34);
             this.button2.TabIndex = 77;
             this.button2.Text = "button2";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(528, 202);
+            this.button3.Margin = new System.Windows.Forms.Padding(1, 1, 1, 1);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(117, 34);
+            this.button3.TabIndex = 78;
+            this.button3.Text = "button3";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(954, 545);
+            this.ClientSize = new System.Drawing.Size(907, 620);
+            this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.btnCriar);
             this.Controls.Add(this.txtCriar);
@@ -668,6 +681,7 @@
         private System.Windows.Forms.TabControl tab;
         private System.Windows.Forms.DataGridView dataGridSQL;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button3;
     }
 }
 
