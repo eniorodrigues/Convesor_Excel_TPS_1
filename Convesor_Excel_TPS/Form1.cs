@@ -56,14 +56,14 @@ namespace Convesor_Excel_TPS
         private void comboBoxServidor_Enter(object sender, EventArgs e)
         {
             comboBoxServidor.Items.Clear();
-      
+
             string myServer = Environment.MachineName;
 
             comboBoxServidor.Items.Add(myServer);
             string ServerName = Environment.MachineName;
 
             RegistryView registryView = Environment.Is64BitOperatingSystem ? RegistryView.Registry64 : RegistryView.Registry32;
-           
+
             using (RegistryKey hklm = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, registryView))
             {
                 RegistryKey instanceKey = hklm.OpenSubKey(@"SOFTWARE\Microsoft\Microsoft SQL Server\Instance Names\SQL", false);
@@ -98,7 +98,7 @@ namespace Convesor_Excel_TPS
             string conexao = comboBoxServidor.Text;
 
             conn = new SqlConnection("Data Source=" + conexao + "; Integrated Security=True; Initial Catalog=" + baseDeDados);
-             
+
             if (chbNova.Checked == true)
             {
                 comboBoxTabela.Enabled = false;
@@ -145,10 +145,10 @@ namespace Convesor_Excel_TPS
             conn.Close();
 
             tabela = comboBoxTabela.SelectedItem.ToString();
- 
+
         }
 
-    private void chbNova_CheckedChanged(object sender, EventArgs e)
+        private void chbNova_CheckedChanged(object sender, EventArgs e)
         {
             if (this.chbNova.Checked)
             {
@@ -240,7 +240,7 @@ namespace Convesor_Excel_TPS
                                 caminho = openFileDialog1.FileName;
                                 directoryPath = Path.GetDirectoryName(openFileDialog1.FileName);
                                 files = (openFileDialog1.SafeFileNames);
-                              //  carregaNomeArquivo();
+                                //  carregaNomeArquivo();
                             }
                         }
                         cmbPlanilha.Enabled = true;
@@ -289,7 +289,7 @@ namespace Convesor_Excel_TPS
             List<string> index = new List<string>();
             List<string> listSQL = new List<string>();
             string[,] rowss = new string[,] { };
-          
+
 
             foreach (DataGridViewRow rowGridSQL in dataGridSQL.Rows)
             {
@@ -340,7 +340,7 @@ namespace Convesor_Excel_TPS
                     MessageBox.Show("Erro no carregaNomeArquivo " + ex.Message);
                 }
 
-                if(chbNova.Checked == true)
+                if (chbNova.Checked == true)
                 {
                     try
                     {
@@ -379,7 +379,7 @@ namespace Convesor_Excel_TPS
 
         private void btnCarregar_Click(object sender, EventArgs e)
         {
- 
+
         }
 
 
@@ -401,7 +401,7 @@ namespace Convesor_Excel_TPS
                     dataGridSQL[hittest.ColumnIndex, hittest.RowIndex].Value = cellvalue;
 
             }
-      
+
         }
 
         private void dataGridSQL_DragEnter(object sender, DragEventArgs e)
@@ -446,50 +446,88 @@ namespace Convesor_Excel_TPS
 
         private void button2_Click(object sender, EventArgs e)
         {
-            
             List<string> listExcel2 = new List<string>();
             List<string> index = new List<string>();
             List<string> listSQL = new List<string>();
             string[,] rowss = new string[,] { };
+            List<string> campos = new List<string>();
 
+            StringBuilder comando = new StringBuilder();
 
-
+            ExcelPackage package = new ExcelPackage(caminho);
+            ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex];
 
             foreach (DataGridViewRow rowGridSQL in dataGridSQL.Rows)
             {
-                if (
-                    rowGridSQL.Cells[1].Value != null) //value coluna 2 is not null
+                listSQL.Add(rowGridSQL.Cells[0].Value.ToString());
+            }
+
+            foreach (DataGridViewRow rowGridExcel in dataGridExcel.Rows)
+            {
+                listExcel2.Add(rowGridExcel.Cells[0].Value.ToString());
+            }
+
+            for (int i = 0; i < listSQL.Count; i++)
+            {
+                if (i < listExcel2.Count)
                 {
-                    if (rowGridSQL.Cells[1].Value.ToString() != "")
-                    {
-
-                        foreach (DataGridViewRow rowGridExcel in dataGridExcel.Rows)
-                        {
-                            if (rowGridExcel.Cells[0].Value.ToString().Equals(rowGridSQL.Cells[1].Value.ToString()))
-                            {
-
-                                index.Add(rowGridExcel.Cells[0].RowIndex.ToString()) ;
-                                listExcel2.Add(rowGridExcel.Cells[0].Value.ToString());
-                                listSQL.Add(rowGridSQL.Cells[0].Value.ToString());
-
-                                break;
-                            }
-                        }
-
-          
-                    }
+                    dataGridSQL[1, i].Value = listExcel2[i];
+                }
+                else
+                {
+                    dataGridSQL[1, i].Value = "";
+                    break;
                 }
             }
-            dataGridSQL.DataSource = null;
-            dataGridSQL.Columns.Add("listExcel2", "listExcel2");
-            dataGridSQL.Columns.Add("listSQL", "listSQL");
 
-            for (int i = 0; i < listExcel2.Count; i++)
+            for (int n = 2; n < workSheet.Dimension.Rows - 2; n++)
             {
-                dataGridSQL.Rows.Add();
-                dataGridSQL.Rows[i].Cells["listSQL"].Value = listSQL[i];
-                dataGridSQL.Rows[i].Cells["listExcel2"].Value = listExcel2[i];
+                comando.Append(" Insert into " + tabela + "(  ");
+
+                for (int j = 0; j < listSQL.Count; j++)
+                {
+
+                    if (j == listExcel2.Count - 1)
+                    {
+                        comando.Append(" " + listSQL[j].ToString() + " ) ");
+                    }
+                    else if (j < listExcel2.Count)
+                    {
+                        comando.Append(" " + listSQL[j].ToString() + ", ");
+                    }
+
+                }
+
+                comando.Append(" values ( ");
+
+                for (int i = 1; i < workSheet.Dimension.Columns; i++)
+                {
+                    if (i == workSheet.Dimension.Columns - 1)
+                    {
+                        comando.Append(" " + workSheet.Cells[n, i].Value.ToString() + " ) ");
+                    }
+                }
+                //    if( workSheet.Cells[n, i].Value.ToString() != ""
+                //        && !workSheet.Cells[n, i].Value.ToString().Equals(null) && !workSheet.Cells[n, i].Value.ToString().Equals(""))
+                //    {
+
+                //        if (i == workSheet.Dimension.Columns - 1)
+                //        {
+                //            comando.Append(" " + workSheet.Cells[n, i].Value.ToString() + " ) ");
+                //        }
+                //        else if (i < workSheet.Dimension.Columns )
+                //        {
+                //            MessageBox.Show(n.ToString() + workSheet.Dimension.Rows.ToString());
+                //            comando.Append(" " + workSheet.Cells[n, i].Value.ToString() + ", ");
+                //        }
+                //    }
+
+                //}
+
+
             }
+
+            MessageBox.Show(comando.ToString()); 
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -509,10 +547,10 @@ namespace Convesor_Excel_TPS
             {
                 listExcel2.Add(rowGridExcel.Cells[0].Value.ToString());
             }
- 
+
             for (int i = 0; i < listSQL.Count; i++)
             {
-                if (i < listExcel2.Count  )
+                if (i < listExcel2.Count)
                 {
                     dataGridSQL[1, i].Value = listExcel2[i];
                 }
@@ -521,10 +559,8 @@ namespace Convesor_Excel_TPS
                     dataGridSQL[1, i].Value = "";
                     break;
                 }
-
-       
             }
-             
+
         }
     }
 }
