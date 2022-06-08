@@ -47,6 +47,10 @@ namespace Convesor_Excel_TPS
         public ExcelWorksheet planilhaSelecionada;
         public ExcelWorkbook arquivoSelecionado;
         bool criouTabelaNova = false;
+        int tamanhoLinhas = 0;
+
+
+
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -262,13 +266,25 @@ namespace Convesor_Excel_TPS
             FileInfo existingFile = new FileInfo(caminho);
             ExcelPackage package = new ExcelPackage(existingFile);
             ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex];
-            lblTotal.Text = (workSheet.Dimension.End.Row - 1).ToString();
+            tamanhoLinhas = 0;
             lblTotal.Refresh();
 
             progressBar1.Maximum = (workSheet.Dimension.End.Row);
             planilhaSelecionada = workSheet;
 
             List<string> campos = new List<string>();
+
+            for (int i = 1; i < workSheet.Dimension.Rows; i++)
+            {
+                object objValue = workSheet.Cells[i, 1].Value ?? string.Empty;
+
+                if (!objValue.Equals(""))
+                {
+                    tamanhoLinhas++;
+                }
+            }
+
+            lblTotal.Text = (tamanhoLinhas - 1).ToString();
 
             for (int i = 1; i <= planilhaSelecionada.Dimension.End.Row; i++)
             {
@@ -446,6 +462,8 @@ namespace Convesor_Excel_TPS
 
         private void button2_Click(object sender, EventArgs e)
         {
+
+       
             List<string> listExcel2 = new List<string>();
             List<string> index = new List<string>();
             List<string> listSQL = new List<string>();
@@ -480,9 +498,13 @@ namespace Convesor_Excel_TPS
                 }
             }
 
-            for (int n = 2; n < workSheet.Dimension.Rows - 2; n++)
+ 
+
+           
+
+            for (int n = 2; n < tamanhoLinhas - 2; n++)
             {
-                comando.Append(" Insert into " + tabela + "(  ");
+                comando.Append(" Insert into " + tabela + "(");
 
                 for (int j = 0; j < listSQL.Count; j++)
                 {
@@ -499,32 +521,28 @@ namespace Convesor_Excel_TPS
                 }
 
                 comando.Append(" values ( ");
+                 
 
                 for (int i = 1; i < workSheet.Dimension.Columns; i++)
                 {
-                    if (i == workSheet.Dimension.Columns - 1)
+
+                    object objValue = workSheet.Cells[n, 1].Value ?? string.Empty;
+
+                    if (!objValue.Equals(""))
                     {
-                        comando.Append(" " + workSheet.Cells[n, i].Value.ToString() + " ) ");
+                       if(i == workSheet.Dimension.Columns -1 )
+                        {
+                            comando.Append(" '" + workSheet.Cells[n, i].Value.ToString() + "' ) ");
+                        }
+                       else
+                        {
+                            comando.Append(" '" + workSheet.Cells[n, i].Value.ToString() + "' , ");
+                        }
                     }
+               
+
                 }
-                //    if( workSheet.Cells[n, i].Value.ToString() != ""
-                //        && !workSheet.Cells[n, i].Value.ToString().Equals(null) && !workSheet.Cells[n, i].Value.ToString().Equals(""))
-                //    {
-
-                //        if (i == workSheet.Dimension.Columns - 1)
-                //        {
-                //            comando.Append(" " + workSheet.Cells[n, i].Value.ToString() + " ) ");
-                //        }
-                //        else if (i < workSheet.Dimension.Columns )
-                //        {
-                //            MessageBox.Show(n.ToString() + workSheet.Dimension.Rows.ToString());
-                //            comando.Append(" " + workSheet.Cells[n, i].Value.ToString() + ", ");
-                //        }
-                //    }
-
-                //}
-
-
+             
             }
 
             MessageBox.Show(comando.ToString()); 
